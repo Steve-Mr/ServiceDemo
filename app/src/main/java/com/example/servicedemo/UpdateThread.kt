@@ -33,19 +33,21 @@ class UpdateThread(exampleService: ExampleService) : Thread() {
         val screenStatus : Intent? =IntentFilter(Intent.ACTION_SCREEN_ON).let { intentFilter ->
             context.registerReceiver(null, intentFilter)
         }
+        val timer = Timer()
+                timer.schedule(object : TimerTask(){
+                    override fun run() {
+                        Log.v("INTERACTIVE", context.getSystemService<PowerManager>()?.isInteractive.toString())
+                        if (context.getSystemService<PowerManager>()?.isInteractive != false){
 
-//        if (context.getSystemService<PowerManager>()?.isInteractive != false){
-
-            Timer().schedule(object : TimerTask(){
-                override fun run() {
-                    Log.v("INTERACTIVE", context.getSystemService<PowerManager>()?.isInteractive.toString())
-                    if (context.getSystemService<PowerManager>()?.isInteractive != false){
-
-                    updateNotificationInfo(context)
+                            updateNotificationInfo(context)
+                        }else{
+                            timer.cancel()
+                            timer.purge()
+                        }
                     }
-                }
-            }, 0, 5000L)
-//        }
+                }, 0, 5000L)
+
+
 
     }
 
