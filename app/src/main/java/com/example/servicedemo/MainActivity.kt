@@ -31,12 +31,11 @@ class MainActivity : AppCompatActivity() {
             .setPriority(NotificationCompat.PRIORITY_DEFAULT);
         with(NotificationManagerCompat.from(this)) {
             // notificationId is a unique int for each notification that you must define
-            notify(0, builder.build())
             Log.v("state", "supposed to notify")
         }
 
-        val intent = Intent(this, ExampleService::class.java)
-        applicationContext.startForegroundService(intent)
+//        val intent = Intent(this, ExampleService::class.java)
+//        applicationContext.startForegroundService(intent)
     }
 
     private fun createNotificationChannel() {

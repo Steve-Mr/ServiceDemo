@@ -37,7 +37,8 @@ class UpdateThread(exampleService: ExampleService) : Thread() {
                 timer.schedule(object : TimerTask(){
                     override fun run() {
                         Log.v("INTERACTIVE", context.getSystemService<PowerManager>()?.isInteractive.toString())
-                        if (context.getSystemService<PowerManager>()?.isInteractive != false){
+//                        if (context.getSystemService<PowerManager>()?.isInteractive != false){
+                        if (!currentThread().isInterrupted){
 
                             updateNotificationInfo(context)
                         }else{

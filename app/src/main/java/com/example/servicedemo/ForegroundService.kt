@@ -15,16 +15,14 @@ import androidx.core.app.NotificationCompat
 import androidx.core.content.getSystemService
 import java.util.*
 
-class ExampleService : Service() {
+class ForegroundService : Service(){
 
     private var timer = Timer()
-    private var isTimerRunning = false
-    private var isScreenOnReceiver = false
-    private var isLevelReceiver = false
+    var isTimerRunning = false
+    var isScreenOnReceiver = false
 
     val screenReceiver = ScreenReceiver()
-    private val chargingReceiver = ChargingReceiver()
-    val levelReceiver = BatteryLevelReceiver()
+    val chargingReceiver = ChargingReceiver()
 
     override fun onBind(p0: Intent?): IBinder? {
         TODO("Not yet implemented")
@@ -45,9 +43,9 @@ class ExampleService : Service() {
         Log.v("STATE", "foreground service")
         startForeground(1, notification)// 2
 
-        val batteryStatus: Intent? = registerReceiver(null,
-            IntentFilter(Intent.ACTION_BATTERY_CHANGED)
-        )
+        val batteryStatus: Intent? = IntentFilter(Intent.ACTION_BATTERY_CHANGED).let { ifilter ->
+            registerReceiver(null, ifilter)
+        }
 
         val status: Int = batteryStatus?.getIntExtra(BatteryManager.EXTRA_STATUS, -1) ?: -1
         val isCharging: Boolean = status == BatteryManager.BATTERY_STATUS_CHARGING
@@ -55,8 +53,6 @@ class ExampleService : Service() {
 
         val isInteractive = getSystemService<PowerManager>()?.isInteractive
 
-        Log.v("STATE", isCharging.toString())
-        Log.v("STATUS", status.toString() + " " + BatteryManager.BATTERY_STATUS_CHARGING.toString())
         if (isCharging && isInteractive == true){
             startTimerTask()
         }
@@ -74,8 +70,6 @@ class ExampleService : Service() {
     override fun onDestroy() {
         super.onDestroy()
         unregisterReceiver(chargingReceiver)
-        if (isLevelReceiver) unregisterReceiver(levelReceiver)
-        if (isScreenOnReceiver) unregisterReceiver(screenReceiver)
     }
 
     private fun startTimerTask(){
@@ -84,7 +78,7 @@ class ExampleService : Service() {
             isTimerRunning = true
             timer.schedule(object : TimerTask(){
                 override fun run() {
-                    updateNotificationInfo(1)
+                    updateNotificationInfo()
                 }
             }, 0, 5000L)
         }
@@ -92,9 +86,9 @@ class ExampleService : Service() {
 
     private fun stopTimerTask(){
         if (isTimerRunning){
-            timer.cancel()
-            timer.purge()
-            isTimerRunning = false
+            timer.cancel();
+            timer.purge();
+            isTimerRunning = false;
         }
     }
 
@@ -104,13 +98,13 @@ class ExampleService : Service() {
                 ("android.intent.action.SCREEN_ON" != p1?.action
                         && "android.intent.action.SCREEN_OFF" != p1?.action)
                 || p0?.applicationContext == null) {
-                return
+                return;
             }
             if ("android.intent.action.SCREEN_ON" == p1.action) {
                 startTimerTask()
-                Log.v("==SCREENON ALT==", "Screen on")
+                Log.v("==SCREENON ALT==", "Screen on");
             } else if ("android.intent.action.SCREEN_OFF" == p1.action) {
-                Log.v("==SCREENOFF ALT==", "Screen off")
+                Log.v("==SCREENOFF ALT==", "Screen off");
                 stopTimerTask()
             }
         }
@@ -122,11 +116,9 @@ class ExampleService : Service() {
                 ("android.intent.action.ACTION_POWER_CONNECTED" != p1?.action
                         && "android.intent.action.ACTION_POWER_DISCONNECTED" != p1?.action)
                 || p0?.applicationContext == null) {
-                return
+                return;
             }
             if ("android.intent.action.ACTION_POWER_CONNECTED" == p1.action) {
-                registerReceiver(levelReceiver, IntentFilter(Intent.ACTION_BATTERY_CHANGED))
-                isLevelReceiver = true
                 if (getSystemService<PowerManager>()?.isInteractive != false){
                     startTimerTask()
                 }
@@ -135,35 +127,20 @@ class ExampleService : Service() {
                     filter.addAction(Intent.ACTION_SCREEN_ON)
                     filter.addAction(Intent.ACTION_SCREEN_OFF)
                     registerReceiver(screenReceiver, filter)
-                    isScreenOnReceiver = true
                 }
 
-                Log.v("==CHARGING ALT==", "Screen on")
+                Log.v("==CHARGING ALT==", "Screen on");
             } else if ("android.intent.action.ACTION_POWER_DISCONNECTED" == p1.action) {
-                Log.v("==DISCHARGED ALT==", "Screen off")
+                Log.v("==DISCHARGED ALT==", "Screen off");
                 stopTimerTask()
                 if (isScreenOnReceiver){
                     unregisterReceiver(screenReceiver)
-                    isScreenOnReceiver = false
-                }
-                unregisterReceiver(levelReceiver)
-                isLevelReceiver =false
-            }
-        }
-    }
-
-    inner class BatteryLevelReceiver : BroadcastReceiver() {
-        override fun onReceive(p0: Context?, p1: Intent?) {
-            val level: Int? = p1?.getIntExtra(BatteryManager.EXTRA_LEVEL, 0)
-            if (level != null) {
-                if (level == 47 || level == 50){
-                    updateNotificationInfo(2)
                 }
             }
         }
     }
 
-    private fun updateNotificationInfo(id:Int) {
+    private fun updateNotificationInfo() {
         val notificationIntent = Intent(this, MainActivity::class.java)
         val pendingIntent =
             PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_IMMUTABLE)// 1
@@ -185,6 +162,6 @@ class ExampleService : Service() {
 
         Log.v("THREAD ALT", "running thread")
         val notificationManager: NotificationManager = this.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        notificationManager.notify(id,notification)
+        notificationManager.notify(1,notification)
     }
 }
