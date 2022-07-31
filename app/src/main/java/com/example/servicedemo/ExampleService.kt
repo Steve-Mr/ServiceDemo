@@ -26,6 +26,14 @@ class ExampleService : Service() {
     private val chargingReceiver = ChargingReceiver()
     val levelReceiver = BatteryLevelReceiver()
 
+    companion object {
+        private var isExampleServiceRunning = false
+        @JvmStatic
+        fun isExampleServiceRunning() : Boolean{
+            return isExampleServiceRunning
+        }
+    }
+
     override fun onBind(p0: Intent?): IBinder? {
         TODO("Not yet implemented")
     }
@@ -60,6 +68,9 @@ class ExampleService : Service() {
         if (isCharging && isInteractive == true){
             startTimerTask()
         }
+
+        isExampleServiceRunning = true
+
         return START_NOT_STICKY
     }
 
@@ -73,6 +84,7 @@ class ExampleService : Service() {
 
     override fun onDestroy() {
         super.onDestroy()
+        isExampleServiceRunning = false
         unregisterReceiver(chargingReceiver)
         if (isLevelReceiver) unregisterReceiver(levelReceiver)
         if (isScreenOnReceiver) unregisterReceiver(screenReceiver)
@@ -187,4 +199,6 @@ class ExampleService : Service() {
         val notificationManager: NotificationManager = this.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.notify(id,notification)
     }
+
+
 }
