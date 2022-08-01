@@ -21,6 +21,26 @@
     <item
         component="ComponentInfo{com.tencent.mobileqq/com.tencent.mobileqq.activity.SplashActivity}"
         drawable="q" />
-
+    <item
+        component="ComponentInfo{com.oplus.camera/com.oplus.camera.Camera/}"
+        drawable="camera" />
+    <item
+        component="ComponentInfo{com.heytap.themestore/com.nearme.themespace.activities.ThemeActivity/}"
+        drawable="theme" />
+    <item
+        component="ComponentInfo{by4a.setedit22/by4a.setedit.EditorActivity/}"
+        drawable="setedit" />
+    <item
+        component="ComponentInfo{com.heytap.speechassist/com.heytap.speechassist.launcher.SpeechAssistMainActivity/}"
+        drawable="assistant" />
+    <item
+        component="ComponentInfo{org.kde.kdeconnect_tp/org.kde.kdeconnect.UserInterface.MainActivity/}"
+        drawable="kdeconnect" />
+    <item
+        component="ComponentInfo{com.android.incallui/null/}"
+        drawable="calls" />
+    <item
+        component="ComponentInfo{com.android.providers.contacts/null/}"
+        drawable="contacts" />
 
 </resources>
