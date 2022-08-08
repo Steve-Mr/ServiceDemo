@@ -40,7 +40,7 @@
         component="ComponentInfo{com.android.incallui/null/}"
         drawable="calls" />
     <item
-        component="ComponentInfo{com.android.providers.contacts/null/}"
+        component="ComponentInfo{com.android.contacts/com.android.contacts.PeopleActivityAlias/}"
         drawable="contacts" />
 
 </resources>
